@@ -1,0 +1,86 @@
+177. Nth Highest Salary
+
+Table: Employee
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| id          | int  |
+| salary      | int  |
++-------------+------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains information about the salary of an employee.
+ 
+
+Write a solution to find the nth highest distinct salary from the Employee table. If there are less than n distinct salaries, return null.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+n = 2
+Output: 
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+Example 2:
+
+Input: 
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
++----+--------+
+n = 2
+Output: 
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| null                   |
++------------------------+
+
+
+
+SOLUTION:
+
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+SET N=N-1;
+  RETURN (
+      # Write your MySQL query statement below.
+    SELECT DISTINCT(salary) FROM Employee ORDER BY salary DESC LIMIT 1 OFFSET N
+  );
+END
+
+
+
+EXPLANATION:
+
+Detailed breakdown of the query:
+
+SELECT DISTINCT(salary): This part of the query selects the salary column but only returns unique values. If multiple employees have the same salary, it will only be listed once. 
+
+FROM Employee: This specifies that the data is being retrieved from the Employee table. 
+
+ORDER BY salary DESC: This sorts the results by salary in descending order, meaning the highest salary comes first, followed by the next highest, and so on. 
+
+LIMIT 1: This tells the database to return only a single row from the result set. 
+
+OFFSET N: This is the key to finding the Nth salary. It tells the database to skip the first N rows of the sorted result set before applying the LIMIT clause. 
+If N is 0, it skips zero rows and returns the highest salary.
+If N is 1, it skips the first row (the highest salary) and LIMIT 1 then returns the second-highest salary. 
+If N is 2, it skips the first two rows and LIMIT 1 returns the third-highest salary, and so on. 

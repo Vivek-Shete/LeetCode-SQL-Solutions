@@ -1,0 +1,102 @@
+178. Rank Scores
+
+Table: Scores
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| score       | decimal |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains the score of a game. Score is a floating point value with two decimal places.
+ 
+
+Write a solution to find the rank of the scores. The ranking should be calculated according to the following rules:
+
+The scores should be ranked from the highest to the lowest.
+If there is a tie between two scores, both should have the same ranking.
+After a tie, the next ranking number should be the next consecutive integer value. In other words, there should be no holes between ranks.
+Return the result table ordered by score in descending order.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Scores table:
++----+-------+
+| id | score |
++----+-------+
+| 1  | 3.50  |
+| 2  | 3.65  |
+| 3  | 4.00  |
+| 4  | 3.85  |
+| 5  | 4.00  |
+| 6  | 3.65  |
++----+-------+
+Output: 
++-------+------+
+| score | rank |
++-------+------+
+| 4.00  | 1    |
+| 4.00  | 1    |
+| 3.85  | 2    |
+| 3.65  | 3    |
+| 3.65  | 3    |
+| 3.50  | 4    |
++-------+------+
+
+
+SOLUTION:
+
+SELECT score,DENSE_RANK() OVER (ORDER BY score DESC) AS 'rank' FROM Scores;
+
+
+EXPLAINATION:
+
+/*RANK() : This is also a function but not give consecutive rank.it give rank as 1,1,3,4,4,6 Where as DENSE_RANK will give 1,1,2,3,4,4,5*/
+
+
+The key difference between RANK() and DENSE_RANK() in SQL lies in how they handle ties (duplicate values) when assigning ranks to rows within a result set or partition.
+
+RANK():
+RANK() assigns the same rank to rows that have identical values in the ordering column(s).
+Crucially, RANK() then skips subsequent rank numbers after a tie. This means there will be gaps in the ranking sequence.
+Example with RANK():
+Value
+RANK()
+100
+1
+90
+2
+90
+2
+80
+4
+In this example, the two values of 90 both receive a rank of 2. Since two rows shared rank 2, the next distinct rank is 4, skipping rank 3.
+
+DENSE_RANK():
+DENSE_RANK() also assigns the same rank to rows with identical values in the ordering column(s).
+However, DENSE_RANK() does not skip subsequent rank numbers after a tie. It assigns consecutive ranks, ensuring there are no gaps in the ranking sequence.
+Example with DENSE_RANK():
+Value
+DENSE_RANK()
+100
+1
+90
+2
+90
+2
+80
+3
+In this example, the two values of 90 both receive a rank of 2. The next distinct value (80) then receives a rank of 3, continuing the sequence without a gap.
+
+In summary:
+RANK() creates gaps: in the ranking sequence when ties occur.
+DENSE_RANK() maintains a dense (consecutive) ranking: sequence, even with ties, by not skipping rank numbers.
+The choice between RANK() and DENSE_RANK() depends on the specific ranking requirement and whether gaps in the ranking are acceptable or desired.
+
+
